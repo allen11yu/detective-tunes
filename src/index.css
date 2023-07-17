@@ -129,6 +129,26 @@ nav li {
     animation-delay: 1s;
 }
 
+/* Music card */
+.music-card-container {
+    border: solid 1px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2em;
+    gap: 1em;
+}
+
+.music-card-container > div {
+    height: 100%;
+}
+
+.song-info-container {
+    border: solid 1px;
+    display: flex;
+    flex-direction: column;
+}
+
 /* Animations */
 @keyframes ripple {
     from {

@@ -17,9 +17,9 @@ function DetectPage() {
 
         // after 5 seconds
         // set current status to Analyzing the music
-        setCurrStatus("Analyzing the music...");
-        setIsAnalyzing(true);
-        //setIsDetected(true);
+        //setCurrStatus("Analyzing the music...");
+        //setIsAnalyzing(true);
+        setIsDetected(true);
     };
 
     const recordButton = (

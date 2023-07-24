@@ -86,7 +86,7 @@ nav li {
     height: 4px;
     border-radius: 10px;
     background-color: #B9FAF8;
-    animation: wave 1.5s ease-in-out infinite;
+    animation: wave 1.2s ease-in-out infinite;
 }
 
 .wave-line:nth-child(1) {
@@ -134,13 +134,9 @@ nav li {
     border: solid 1px;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: stretch;
     padding: 2em;
     gap: 1em;
-}
-
-.music-card-container > div {
-    height: 100%;
 }
 
 .song-info-container {

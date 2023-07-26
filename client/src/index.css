@@ -1,174 +1,242 @@
 * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 body {
-    font-family: 'Kanit', sans-serif;
-    background-color: #A663CC;
-    color: #B9FAF8;
+  font-family: "Kanit", sans-serif;
+  background-color: #a663cc;
+  color: #b9faf8;
 }
 
 /* General */
 .center {
-    text-align: center;
+  text-align: center;
+}
+
+h1 {
+  margin-top: 2em;
+}
+
+.margin-top-sm {
+  margin-top: 3em;
 }
 
 /* Nav bar */
 nav {
-    background-color: aliceblue;
-    height: 3.5rem;
-    padding: 1.5em;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  background-color: #b8d0eb;
+  height: 3.5rem;
+  padding: 1.5em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 
 nav li {
-    display: inline-block;
-    list-style: none;
-    padding: 0 1em;
-    cursor: pointer;
+  display: inline-block;
+  list-style: none;
+  padding: 0 1em;
+  cursor: pointer;
 }
 
 .link {
-    text-decoration: none;
-    font-size: 1.5rem;
+  color: #6f2dbd;
+  text-decoration: none;
+  font-size: 1.5rem;
 }
 
 /* Detect Page */
 .detect {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 70%;
+  margin: auto;
 }
 
 .record {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 150px;
-    width: 150px;
-    margin-top: 2em;
-    font-size: 3rem;
-    background-color: aliceblue;
-    border-radius: 50%;
-    border: 2px solid white;
-    padding: 0.5em;
-    animation: ripple 1.5s linear infinite;
-    transition: all 0.7s ease;
-    color: #A663CC;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 150px;
+  width: 150px;
+  margin-top: 2em;
+  font-size: 3rem;
+  background-color: aliceblue;
+  border-radius: 50%;
+  border: 2px solid white;
+  padding: 0.5em;
+  animation: ripple 1.5s linear infinite;
+  transition: all 0.7s ease;
+  color: #a663cc;
 }
 
 .record:hover {
-    transform: scale(1.2);
-    cursor: pointer;
-}
-
-.detect p {
-    margin-top: 3em;
+  transform: scale(1.2);
+  cursor: pointer;
 }
 
 .music-wave {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 20px;
-    height: 200px;
-    margin-top: 3em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  height: 200px;
+  margin-top: 3em;
 }
 
 .wave-line {
-    width: 12px;
-    height: 4px;
-    border-radius: 10px;
-    background-color: #B9FAF8;
-    animation: wave 1.2s ease-in-out infinite;
+  width: 12px;
+  height: 4px;
+  border-radius: 10px;
+  background-color: #b9faf8;
+  animation: wave 1.2s ease-in-out infinite;
 }
 
 .wave-line:nth-child(1) {
-    animation-delay: 1s;
+  animation-delay: 1s;
 }
 
 .wave-line:nth-child(2) {
-    animation-delay: 0.8s;
+  animation-delay: 0.8s;
 }
 
 .wave-line:nth-child(3) {
-    animation-delay: 0.6s;
+  animation-delay: 0.6s;
 }
 
 .wave-line:nth-child(4) {
-    animation-delay: 0.4s;
+  animation-delay: 0.4s;
 }
 
 .wave-line:nth-child(5) {
-    animation-delay: 0.2s;
+  animation-delay: 0.2s;
 }
 
 .wave-line:nth-child(6) {
-    animation-delay: 0.2s;
+  animation-delay: 0.2s;
 }
 
 .wave-line:nth-child(7) {
-    animation-delay: 0.4s;
+  animation-delay: 0.4s;
 }
 
 .wave-line:nth-child(8) {
-    animation-delay: 0.6s;
+  animation-delay: 0.6s;
 }
 
 .wave-line:nth-child(9) {
-    animation-delay: 0.8s;
+  animation-delay: 0.8s;
 }
 
 .wave-line:nth-child(10) {
-    animation-delay: 1s;
+  animation-delay: 1s;
 }
 
 /* Music card */
 .music-card-container {
-    border: solid 1px;
-    display: flex;
-    justify-content: center;
-    align-items: stretch;
-    padding: 2em;
-    gap: 1em;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: center;
+  background-color: #6f2dbd;
+  padding: 3em;
+  border-radius: 20px;
+  gap: 1em;
+  margin-top: 2em;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 
-.song-info-container {
-    border: solid 1px;
-    display: flex;
-    flex-direction: column;
+.music-card-container img {
+  display: block;
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  border: 4px solid #ebebed;
+}
+
+.music-card-container a {
+  text-decoration: none;
+  padding: 0.5em;
+}
+
+.music-card-action {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+  font-size: 1.5rem;
+}
+
+.music-playing {
+  animation: spinning-disk 7.5s 0.25s linear infinite;
+}
+
+.play-btn {
+  cursor: pointer;
+  display: inline-block;
+}
+
+.youtube:hover {
+  color: #ff0000;
+}
+
+.spotify:hover {
+  color: #1db954;
+}
+
+.itunes:hover {
+  color: #fb5bc5;
+}
+
+.shazam:hover {
+  color: #0088ff;
+}
+
+.deezer:hover {
+  color: #feaa2d;
+}
+
+.hub {
+  color: #b9faf8;
+  transition: all 0.2s ease-in-out;
 }
 
 /* Animations */
 @keyframes ripple {
-    from {
-      box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.3),
-        0 0 0 1px rgba(255, 255, 255, 0.3),
-        0 0 0 3px rgba(255, 255, 255, 0.3),
-        0 0 0 5px rgba(255, 255, 255, 0.3);
-    }
-    to {
-      box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.3),
-        0 0 0 4px rgba(255, 255, 255, 0.3),
-        0 0 0 20px rgba(255, 255, 255, 0),
-        0 0 0 30px rgba(255, 255, 255, 0);
-    }
+  from {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.3),
+      0 0 0 1px rgba(255, 255, 255, 0.3), 0 0 0 3px rgba(255, 255, 255, 0.3),
+      0 0 0 5px rgba(255, 255, 255, 0.3);
+  }
+  to {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.3),
+      0 0 0 4px rgba(255, 255, 255, 0.3), 0 0 0 20px rgba(255, 255, 255, 0),
+      0 0 0 30px rgba(255, 255, 255, 0);
+  }
 }
 
 @keyframes wave {
-    0% {
-        height: 4px;
-    }
-    50% {
-        height: 90px;
-    }
-    100% {
-        height: 4px;
-    }
+  0% {
+    height: 4px;
+  }
+  50% {
+    height: 90px;
+  }
+  100% {
+    height: 4px;
+  }
+}
+
+@keyframes spinning-disk {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(1turn);
+  }
 }

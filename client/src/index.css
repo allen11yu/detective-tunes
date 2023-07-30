@@ -27,17 +27,22 @@ h1 {
 nav {
   background-color: #b8d0eb;
   height: 3.5rem;
-  padding: 1.5em;
+  padding: 2em;
   display: flex;
   justify-content: space-between;
   align-items: center;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 
+nav ul {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+}
+
 nav li {
-  display: inline-block;
   list-style: none;
-  padding: 0 1em;
   cursor: pointer;
 }
 
@@ -53,7 +58,6 @@ nav li {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  width: 70%;
   margin: auto;
 }
 
@@ -148,6 +152,7 @@ nav li {
   gap: 1em;
   margin-top: 2em;
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  width: 400px;
 }
 
 .music-card-container img {

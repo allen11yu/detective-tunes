@@ -3,7 +3,7 @@ const bodyParser = require("body-parser");
 const app = express();
 app.use(bodyParser.json({ limit: "1mb" }));
 const cors = require("cors");
-require("dotenv").config({ path: "./config/process.env" });
+require("dotenv").config();
 const { Pool } = require("pg");
 const fetch = require("node-fetch");
 
@@ -22,6 +22,7 @@ const pool = new Pool({
 //test
 app.get("/test", async function (req, res) {
   try {
+    console.log(process.env.TEST);
     res.type("text");
     res.send("hello");
   } catch {}
@@ -113,8 +114,6 @@ async function extractSongInfo(detectRes) {
 // get user history
 
 // save music
-
-//
 
 const PORT = process.env.PORT || 5000;
 

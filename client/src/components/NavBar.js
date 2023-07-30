@@ -1,20 +1,25 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import GoogleButton from "./GoogleButton";
 
-function NavBar() {
-    return (
-        <nav>
-            <div>
-                <ul>
-                    <li><Link className="link" to="/">Detect</Link></li>
-                    <li><Link className="link" to="/">Detected</Link></li>
-                </ul>
-            </div>
-            <div>
-                <p><Link className="link" to="/">User</Link></p>
-            </div>
-        </nav>
-    );
+function NavBar({ isLogin, setIsLoginCallback }) {
+  return (
+    <nav>
+      <ul>
+        <li>
+          <Link className="link" to="/">
+            Detect
+          </Link>
+        </li>
+        <li>
+          <Link className="link" to="/library">
+            Library
+          </Link>
+        </li>
+      </ul>
+      <GoogleButton />
+    </nav>
+  );
 }
 
 export default NavBar;

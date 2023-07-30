@@ -3,6 +3,7 @@ import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMicrophone } from "@fortawesome/free-solid-svg-icons";
 import MusicCard from "./MusicCard";
+import MusicWave from "./MusicWave";
 
 function DetectPage() {
   const [currStatus, setCurrStatus] = useState(null);
@@ -123,55 +124,10 @@ function DetectPage() {
     </div>
   );
 
-  const musicWave = (
-    <div className="music-wave">
-      <div
-        className="wave-line"
-        style={{ backgroundColor: isAnalyzing && "#3A86FF" }}
-      ></div>
-      <div
-        className="wave-line"
-        style={{ backgroundColor: isAnalyzing && "#8338EC" }}
-      ></div>
-      <div
-        className="wave-line"
-        style={{ backgroundColor: isAnalyzing && "#FF006E" }}
-      ></div>
-      <div
-        className="wave-line"
-        style={{ backgroundColor: isAnalyzing && "#FB5607" }}
-      ></div>
-      <div
-        className="wave-line"
-        style={{ backgroundColor: isAnalyzing && "#FFBE0B" }}
-      ></div>
-      <div
-        className="wave-line"
-        style={{ backgroundColor: isAnalyzing && "#FFBE0B" }}
-      ></div>
-      <div
-        className="wave-line"
-        style={{ backgroundColor: isAnalyzing && "#FB5607" }}
-      ></div>
-      <div
-        className="wave-line"
-        style={{ backgroundColor: isAnalyzing && "#FF006E" }}
-      ></div>
-      <div
-        className="wave-line"
-        style={{ backgroundColor: isAnalyzing && "#8338EC" }}
-      ></div>
-      <div
-        className="wave-line"
-        style={{ backgroundColor: isAnalyzing && "#3A86FF" }}
-      ></div>
-    </div>
-  );
-
   const preDetect = (
     <div className="detect container">
       <h1>Click on the record button below to start detecting songs.</h1>
-      {currStatus ? musicWave : recordButton}
+      {currStatus ? <MusicWave isAnalyzing={isAnalyzing} /> : recordButton}
       <p className="margin-top-sm">{currStatus}</p>
     </div>
   );

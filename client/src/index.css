@@ -47,9 +47,27 @@ nav li {
 }
 
 .link {
-  color: #6f2dbd;
+  color: c;
   text-decoration: none;
   font-size: 1.5rem;
+}
+
+.profile img {
+  border-radius: 50%;
+  width: 40px;
+  height: auto;
+}
+
+.profile {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+  color: #6f2dbd;
+}
+
+.profile span {
+  cursor: pointer;
 }
 
 /* Detect Page */

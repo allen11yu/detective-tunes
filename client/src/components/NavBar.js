@@ -1,8 +1,13 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import GoogleButton from "./GoogleButton";
+import GoogleOAuth from "./GoogleOAuth";
 
-function NavBar({ isLogin, setIsLoginCallback }) {
+function NavBar({
+  isLogin,
+  setIsLoginCallback,
+  user,
+  setUserCallback,
+}) {
   return (
     <nav>
       <ul>
@@ -17,7 +22,12 @@ function NavBar({ isLogin, setIsLoginCallback }) {
           </Link>
         </li>
       </ul>
-      <GoogleButton />
+      <GoogleOAuth
+        isLogin={isLogin}
+        setIsLoginCallback={setIsLoginCallback}
+        user={user}
+        setUserCallback={setUserCallback}
+      />
     </nav>
   );
 }

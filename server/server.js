@@ -6,6 +6,7 @@ const cors = require("cors");
 require("dotenv").config();
 const { Pool } = require("pg");
 const fetch = require("node-fetch");
+const { OAuth2Client } = require("google-auth-library");
 
 // built-in middleware
 app.use(express.json());
@@ -17,6 +18,44 @@ const pool = new Pool({
   host: process.env.DB_HOST,
   port: process.env.DB_PORT,
   database: process.env.DB_NAME,
+});
+
+app.post("/user", async function (req, res) {
+  try {
+    test = {
+      picture:
+        "https://lh3.googleusercontent.com/a/AAcHTtdaQ2YJTuxFFRGvF_ERvilqfjnSumsYnfd71iO7PXo5=s96-c",
+      sub: "106858174925066300006",
+    };
+    res.send(test);
+  } catch {
+    res.type("text");
+    res.status(500).send("Failed to obtain user data");
+  }
+});
+
+app.post("/verify", async function (req, res) {
+  try {
+    const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+    // Call the verifyIdToken to
+    // verify and decode it
+    const ticket = await client.verifyIdToken({
+      idToken: req.body.credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    // Get the JSON with all the user info
+    const payload = ticket.getPayload();
+
+    // This is a JSON object that contains
+    // all the user info
+    console.log("Successfully authenticate the JWT token.");
+    res.send(payload);
+  } catch {
+    res.type("text");
+    res.status(500).send("Failed to authenticate the JWT token.");
+  }
 });
 
 //test

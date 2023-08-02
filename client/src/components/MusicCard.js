@@ -10,7 +10,7 @@ import { faCirclePause, faCirclePlay } from "@fortawesome/free-solid-svg-icons";
 
 function MusicCard({ songData }) {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [previewAudio] = useState(new Audio(songData.previewLink));
+  const [previewAudio] = useState(new Audio(songData.preview));
   console.log("Here is the songData passed down!");
   console.log(songData);
 
@@ -42,19 +42,19 @@ function MusicCard({ songData }) {
           <FontAwesomeIcon icon={isPlaying ? faCirclePause: faCirclePlay} size="2xl" onClick={handlePlayMusic} className="play-btn"/>
         </div>
         <div>
-          <a href={songData.youtubeLink} target="_blank" rel="noopener noreferrer" className="hub youtube">
+          <a href={songData.youtube} target="_blank" rel="noopener noreferrer" className="hub youtube">
             <FontAwesomeIcon icon={faYoutube} />
           </a>
-          <a href={songData.spotifyLink} target="_blank" rel="noopener noreferrer" className="hub spotify">
+          <a href={songData.spotify} target="_blank" rel="noopener noreferrer" className="hub spotify">
             <FontAwesomeIcon icon={faSpotify} />
           </a>
-          <a href={songData.itunesLink} target="_blank" rel="noopener noreferrer" className="hub itunes">
+          <a href={songData.itunes} target="_blank" rel="noopener noreferrer" className="hub itunes">
             <FontAwesomeIcon icon={faItunes} />
           </a>
-          <a href={songData.deezerLink} target="_blank" rel="noopener noreferrer" className="hub deezer">
+          <a href={songData.deezer} target="_blank" rel="noopener noreferrer" className="hub deezer">
             <FontAwesomeIcon icon={faDeezer} />
           </a>
-          <a href={songData.shazamLink} target="_blank" rel="noopener noreferrer" className="hub shazam">
+          <a href={songData.shazam} target="_blank" rel="noopener noreferrer" className="hub shazam">
             <svg
               viewBox="0 0 24 24"
               fill="currentColor"

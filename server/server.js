@@ -20,13 +20,13 @@ const pool = new Pool({
   database: process.env.DB_NAME,
 });
 
+app.post("/add", async function (req, res) {});
+
 //
 app.get("/user/:user", async function (req, res) {
   try {
     let userId = req.params["user"];
     let searchRes = await getUser(userId);
-    console.log(searchRes);
-
     res.json({
       sub: searchRes[0].user_id,
       picture: searchRes[0].pfp,
@@ -65,12 +65,10 @@ app.post("/verify", async function (req, res) {
 });
 
 //test
-app.post("/test", async function (req, res) {
+app.get("/test", async function (req, res) {
   try {
-    let searchUserQuery = "SELECT * FROM dt_user";
-    console.log("searching");
-    let search = await pool.query(searchUserQuery);
-    console.log(search);
+    let music = await getSong("1");
+    console.log(music);
     res.send({
       test: "testing",
     });
@@ -93,9 +91,45 @@ app.post("/detect", async function (req, res) {
   try {
     const response = await fetch(url, options);
     const result = await response.json();
+    let dbMusic = await getSong(result.track.key);
 
+    let songInfo = {};
+    if (dbMusic.length === 0) {
+      console.log("music not exist yet");
+      songInfo = await extractSongInfo(result);
+      if (req.body.userId !== "") {
+        console.log(
+          "user is logged in, adding song to the database. UserID: " +
+            req.body.userId
+        );
+        await addSong(songInfo);
+      } else {
+        // delete this else statement.
+        console.log("user is not logged in, not adding song to the database");
+      }
+    } else {
+      console.log("music exist in the database");
+      songInfo = {
+        musicId: dbMusic[0].music_id,
+        title: dbMusic[0].title,
+        artist: dbMusic[0].artist,
+        cover: dbMusic[0].cover,
+        youtube: dbMusic[0].youtube,
+        shazam: dbMusic[0].shazam,
+        itunes: dbMusic[0].itunes,
+        spotify: dbMusic[0].spotify,
+        preview: dbMusic[0].preview,
+        deezer: dbMusic[0].deezer,
+        album: dbMusic[0].album,
+      };
+    }
 
-    let songInfo = await extractSongInfo(result);
+    let currDate = new Date().toISOString().split("T")[0];
+    if (req.body.userId !== "") {
+      console.log("linking music to user");
+      await addLibrary(req.body.userId, songInfo.musicId, currDate);
+    }
+
     res.send(songInfo);
   } catch (error) {
     res.type("text");
@@ -104,27 +138,19 @@ app.post("/detect", async function (req, res) {
 });
 
 async function extractSongInfo(detectRes) {
-  let musicId = detectRes.track.key;
-  let title = detectRes.track.title;
-  let artist = detectRes.track.subtitle;
-  let cover = detectRes.track.images.coverarthq;
-  let youtubeLink = "";
+  let youtube = "";
   for (let i = 0; i < detectRes.track.sections.length; i++) {
     if (detectRes.track.sections[i].type === "VIDEO") {
-      youtubeLink = detectRes.track.sections[i].youtubeurl.actions[0].uri;
+      youtube = detectRes.track.sections[i].youtubeurl.actions[0].uri;
     }
   }
 
-  let shazamLink = detectRes.track.url;
-  let itunesLink = detectRes.track.hub.options[1].actions[0].uri;
-  let spotifyLink = detectRes.track.hub.providers[0].actions[0].uri;
-  spotifyLink =
-    "https://open.spotify.com/search/" + spotifyLink.split(":").pop();
-  let previewLink = "";
-  let deezerLink = "";
-  let album = "";
+  let spotify = detectRes.track.hub.providers[0].actions[0].uri;
+  spotify = "https://open.spotify.com/search/" + spotify.split(":").pop();
 
-  // take the first and last word of title and append to the full artist.
+  // take the first and last word of title and append to the full artist.\
+  let artist = detectRes.track.subtitle;
+  let title = detectRes.track.title;
   let titleArr = title.replace(/[\])}[{(]/g, "").split(" ");
   let fullName =
     titleArr[0] +
@@ -142,27 +168,46 @@ async function extractSongInfo(detectRes) {
     },
   };
 
-  const response = await fetch(url, options).then((res) => res.json());
-  previewLink = response.data[0].preview;
-  deezerLink = response.data[0].link;
-  album = response.data[0].album.title;
+  const deezerRes = await fetch(url, options).then((res) => res.json());
+  return {
+    musicId: detectRes.track.key,
+    title: title,
+    artist: artist,
+    cover: detectRes.track.images.coverarthq,
+    youtube: youtube,
+    shazam: detectRes.track.url,
+    itunes: detectRes.track.hub.options[1].actions[0].uri,
+    spotify: spotify,
+    preview: deezerRes.data[0].preview,
+    deezer: deezerRes.data[0].link,
+    album: deezerRes.data[0].album.title,
+  };
+}
 
+async function addSong(songInfo) {
+  let query =
+    "INSERT INTO music (music_id, title, album, artist, cover, deezer, itunes, preview, shazam, spotify, youtube) " +
+    "VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)";
+  let values = [
+    songInfo.musicId,
+    songInfo.title,
+    songInfo.album,
+    songInfo.artist,
+    songInfo.cover,
+    songInfo.deezer,
+    songInfo.itunes,
+    songInfo.preview,
+    songInfo.shazam,
+    songInfo.spotify,
+    songInfo.youtube,
+  ];
+  await pool.query(query, values);
+}
 
-  /// add to data base
-
-  return JSON.stringify({
-    musicId,
-    title,
-    artist,
-    cover,
-    youtubeLink,
-    shazamLink,
-    itunesLink,
-    spotifyLink,
-    previewLink,
-    deezerLink,
-    album,
-  });
+async function getSong(musicId) {
+  let query = "SELECT * FROM music WHERE music_id = $1";
+  let musicRes = await pool.query(query, [musicId]);
+  return musicRes.rows;
 }
 
 async function getUser(userId) {
@@ -174,7 +219,8 @@ async function getUser(userId) {
 
 async function newUser(user) {
   let query =
-    "INSERT INTO dt_user (user_id, email, pfp, first_name, last_name) VALUES ($1, $2, $3, $4, $5);";
+    "INSERT INTO dt_user (user_id, email, pfp, first_name, last_name) " +
+    "VALUES ($1, $2, $3, $4, $5)";
   let values = [
     user.sub,
     user.email,
@@ -187,7 +233,8 @@ async function newUser(user) {
 
 async function updateUser(user) {
   let query =
-    "UPDATE dt_user SET email = $2, pfp = $3, first_name = $4, last_name = $5 WHERE user_id = $1;";
+    "UPDATE dt_user SET email = $2, pfp = $3, first_name = $4, last_name = $5 " +
+    "WHERE user_id = $1";
   let values = [
     user.sub,
     user.email,
@@ -198,10 +245,23 @@ async function updateUser(user) {
   await pool.query(query, values);
 }
 
-// when detected, check if music exist in table, if not add music entry
-// get user info
-// when user login, check if user exist in table, if not add user entry
+// Link user to music
+async function addLibrary(userId, musicId, currDate) {
+  let query =
+    "INSERT INTO detected (user_id, music_id, detected_date) " +
+    "VALUES ($1, $2, $3)";
+  let values = [userId, musicId, currDate];
+  await pool.query(query, values);
+}
+
 // get user history
+async function getLibrary(userId) {
+  //   SELECT * FROM music
+  //    INNER JOIN (SELECT *
+  // 		            FROM detected
+  // 		            WHERE user_id = '106858174925066300006') AS linked
+  //    ON linked.music_id = music.music_id;
+}
 
 const PORT = process.env.PORT || 5000;
 

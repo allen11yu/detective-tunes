@@ -12,8 +12,6 @@ function GoogleOAuth({ isLogin, setIsLoginCallback, user, setUserCallback }) {
     })
       .then((res) => res.json())
       .then((userData) => {
-
-        console.log("verfiry response");
         setUserCallback(userData);
         localStorage.setItem("userid", userData.sub);
       });

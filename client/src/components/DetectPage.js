@@ -1,41 +1,26 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMicrophone } from "@fortawesome/free-solid-svg-icons";
 import MusicCard from "./MusicCard";
 import MusicWave from "./MusicWave";
 
-function DetectPage() {
+function DetectPage({ user }) {
   const [currStatus, setCurrStatus] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isDetected, setIsDetected] = useState(false);
-  const [songData, setSongData] = useState({
-    title:
-      "Calling (feat. A Boogie wit da Hoodie) [Spider-Man: Across the Spider-Verse]",
-    artist: "Metro Boomin, Swae Lee & NAV",
-    cover:
-      "https://is3-ssl.mzstatic.com/image/thumb/Music116/v4/c9/ca/6b/c9ca6b51-87a9-4a13-d37f-24535687023d/23UMGIM63882.rgb.jpg/400x400cc.jpg",
-    youtubeLink: "https://youtu.be/nN4KoOOUAnA?autoplay=1",
-    shazamLink:
-      "https://www.shazam.com/track/668228218/calling-feat-a-boogie-wit-da-hoodie-spider-man-across",
-    itunesLink:
-      "https://itunes.apple.com/us/album/calling-feat-a-boogie-wit-da-hoodie-spider-man-across/1690685331?i=1690685617&mttnagencyid=s2n&mttnsiteid=125115&mttn3pid=Apple-Shazam&mttnsub1=Shazam_ios&mttnsub2=5348615A-616D-3235-3830-44754D6D5973&itscg=30201&app=itunes&itsct=Shazam_ios",
-    spotifyLink:
-      "https://open.spotify.com/search/Calling%20%28feat.%20A%20Boogie%20wit%20da%20Hoodie%29%20%5BSpider-Man%3A%20Across%20the%20Spider-Verse%5D%20Metro%20Boomin",
-    previewLink:
-      "https://cdns-preview-3.dzcdn.net/stream/c-3ae9b75df867da9c7483dd239c63ee58-6.mp3",
-    deezerLink: "https://www.deezer.com/track/2309928795",
-    album:
-      "METRO BOOMIN PRESENTS SPIDER-MAN: ACROSS THE SPIDER-VERSE (SOUNDTRACK FROM AND INSPIRED BY THE MOTION PICTURE)",
-  });
+  const [songData, setSongData] = useState(null);
 
   const fetchDetect = async (audioBase64) => {
+    let userId = user ? user.sub : "";
+
+    console.log("User logged in? " + userId);
     await fetch("/detect", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ audioBase64 }),
+      body: JSON.stringify({ audioBase64, userId }),
     })
       .then((res) => res.json())
       .then((data) => {
@@ -47,6 +32,18 @@ function DetectPage() {
     setIsDetected(true);
     setSongData(data);
   };
+
+  useEffect(() => {
+    const addToLibrary = () => {
+      console.log("song data in useEffect");
+      console.log(songData);
+      console.log("adding to library");
+    }
+
+    if (user && songData) {
+      addToLibrary();
+    }
+  }, [user]);
 
   const handleRecord = () => {
     setCurrStatus("Listening...");
@@ -85,10 +82,10 @@ function DetectPage() {
             audioContext.decodeAudioData(arrayBuffer, (buffer) => {
               let base64 = bufferToBase64(buffer);
               console.log(base64);
-              //fetchDetect(base64);
+              fetchDetect(base64);
 
               //delete
-              setIsDetected(true);
+              //setIsDetected(true);
             });
           };
         });

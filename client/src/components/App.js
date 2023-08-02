@@ -12,8 +12,6 @@ function App() {
     await fetch("/user/" + userid)
       .then((res) => res.json())
       .then((userData) => {
-        console.log("the new user data");
-        console.log(userData);
         setUser(userData);
       });
   };
@@ -34,8 +32,8 @@ function App() {
         setUserCallback={setUser}
       />
       <Routes>
-        <Route path="/" element={<DetectPage />} />
-        <Route path="/library" element={<LibraryPage isLogin={isLogin} />} />
+        <Route path="/" element={<DetectPage user={user} />} />
+        <Route path="/library" element={<LibraryPage user={user} />} />
       </Routes>
     </>
   );

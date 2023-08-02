@@ -20,14 +20,17 @@ const pool = new Pool({
   database: process.env.DB_NAME,
 });
 
-app.post("/user", async function (req, res) {
+//
+app.get("/user/:user", async function (req, res) {
   try {
-    test = {
-      picture:
-        "https://lh3.googleusercontent.com/a/AAcHTtdaQ2YJTuxFFRGvF_ERvilqfjnSumsYnfd71iO7PXo5=s96-c",
-      sub: "106858174925066300006",
-    };
-    res.send(test);
+    let userId = req.params["user"];
+    let searchRes = await getUser(userId);
+    console.log(searchRes);
+
+    res.json({
+      sub: searchRes[0].user_id,
+      picture: searchRes[0].pfp,
+    });
   } catch {
     res.type("text");
     res.status(500).send("Failed to obtain user data");
@@ -37,21 +40,24 @@ app.post("/user", async function (req, res) {
 app.post("/verify", async function (req, res) {
   try {
     const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-
-    // Call the verifyIdToken to
-    // verify and decode it
     const ticket = await client.verifyIdToken({
       idToken: req.body.credential,
       audience: process.env.GOOGLE_CLIENT_ID,
     });
-
-    // Get the JSON with all the user info
     const payload = ticket.getPayload();
 
-    // This is a JSON object that contains
-    // all the user info
-    console.log("Successfully authenticate the JWT token.");
-    res.send(payload);
+    let user = await getUser(payload.sub);
+    if (user.length === 0) {
+      console.log("user " + payload.sub + " not found, creating a new entry.");
+      await newUser(payload);
+    } else {
+      console.log("updating user info");
+      await updateUser(payload);
+    }
+    res.json({
+      sub: payload.sub,
+      picture: payload.picture,
+    });
   } catch {
     res.type("text");
     res.status(500).send("Failed to authenticate the JWT token.");
@@ -59,11 +65,15 @@ app.post("/verify", async function (req, res) {
 });
 
 //test
-app.get("/test", async function (req, res) {
+app.post("/test", async function (req, res) {
   try {
-    console.log(process.env.TEST);
-    res.type("text");
-    res.send("hello");
+    let searchUserQuery = "SELECT * FROM dt_user";
+    console.log("searching");
+    let search = await pool.query(searchUserQuery);
+    console.log(search);
+    res.send({
+      test: "testing",
+    });
   } catch {}
 });
 
@@ -83,6 +93,8 @@ app.post("/detect", async function (req, res) {
   try {
     const response = await fetch(url, options);
     const result = await response.json();
+
+
     let songInfo = await extractSongInfo(result);
     res.send(songInfo);
   } catch (error) {
@@ -92,6 +104,7 @@ app.post("/detect", async function (req, res) {
 });
 
 async function extractSongInfo(detectRes) {
+  let musicId = detectRes.track.key;
   let title = detectRes.track.title;
   let artist = detectRes.track.subtitle;
   let cover = detectRes.track.images.coverarthq;
@@ -134,7 +147,11 @@ async function extractSongInfo(detectRes) {
   deezerLink = response.data[0].link;
   album = response.data[0].album.title;
 
+
+  /// add to data base
+
   return JSON.stringify({
+    musicId,
     title,
     artist,
     cover,
@@ -148,11 +165,43 @@ async function extractSongInfo(detectRes) {
   });
 }
 
-// save user
+async function getUser(userId) {
+  let query = "SELECT * FROM dt_user WHERE user_id = $1";
+  console.log("getting the user from DB");
+  let searchRes = await pool.query(query, [userId]);
+  return searchRes.rows;
+}
 
+async function newUser(user) {
+  let query =
+    "INSERT INTO dt_user (user_id, email, pfp, first_name, last_name) VALUES ($1, $2, $3, $4, $5);";
+  let values = [
+    user.sub,
+    user.email,
+    user.picture,
+    user.given_name,
+    user.family_name,
+  ];
+  await pool.query(query, values);
+}
+
+async function updateUser(user) {
+  let query =
+    "UPDATE dt_user SET email = $2, pfp = $3, first_name = $4, last_name = $5 WHERE user_id = $1;";
+  let values = [
+    user.sub,
+    user.email,
+    user.picture,
+    user.given_name,
+    user.family_name,
+  ];
+  await pool.query(query, values);
+}
+
+// when detected, check if music exist in table, if not add music entry
+// get user info
+// when user login, check if user exist in table, if not add user entry
 // get user history
-
-// save music
 
 const PORT = process.env.PORT || 5000;
 

@@ -9,15 +9,10 @@ function App() {
   const [user, setUser] = useState(null);
 
   const fetchUser = async (userid) => {
-    await fetch("/user", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ userid }),
-    })
+    await fetch("/user/" + userid)
       .then((res) => res.json())
       .then((userData) => {
+        console.log("the new user data");
         console.log(userData);
         setUser(userData);
       });
@@ -25,14 +20,9 @@ function App() {
 
   useEffect(() => {
     let userid = localStorage.getItem("userid");
-    console.log(userid);
     if (userid) {
       fetchUser(userid);
-    } else {
-      console.log("no user id found");
     }
-    // fetch post userid
-    // and set user
   }, []);
 
   return (

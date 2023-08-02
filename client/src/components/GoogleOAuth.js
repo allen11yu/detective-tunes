@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { GoogleLogin } from "@react-oauth/google";
 
 function GoogleOAuth({ isLogin, setIsLoginCallback, user, setUserCallback }) {
@@ -12,10 +12,9 @@ function GoogleOAuth({ isLogin, setIsLoginCallback, user, setUserCallback }) {
     })
       .then((res) => res.json())
       .then((userData) => {
-        console.log(userData);
-        setUserCallback(userData);
 
-        // set local storage id
+        console.log("verfiry response");
+        setUserCallback(userData);
         localStorage.setItem("userid", userData.sub);
       });
   };
@@ -27,13 +26,12 @@ function GoogleOAuth({ isLogin, setIsLoginCallback, user, setUserCallback }) {
 
   const handleFailedLogin = () => {
     console.log("login failed");
+    setUserCallback(null);
   };
 
   const handleLogout = () => {
     console.log("logging out");
     setUserCallback(null);
-
-    // delete local storage id
     localStorage.removeItem("userid");
   };
 
@@ -49,7 +47,7 @@ function GoogleOAuth({ isLogin, setIsLoginCallback, user, setUserCallback }) {
     <div>
       {user ? (
         <div className="profile">
-          <img src={user.picture} alt="Profile picture"></img>
+          <img src={user.picture} alt="User profile"></img>
           <span onClick={handleLogout}>Logout</span>
         </div>
       ) : (

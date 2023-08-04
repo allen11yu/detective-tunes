@@ -20,6 +20,17 @@ const pool = new Pool({
   database: process.env.DB_NAME,
 });
 
+app.get("/library/:user", async function(req, res) {
+  try {
+    let userId = req.params["user"];
+    let libraryRes = await getLibrary(userId);
+    res.send(libraryRes);
+  } catch {
+    res.type("text");
+    res.status(500).send("Failed to obtain user library.");
+  }
+});
+
 app.post("/add", async function (req, res) {});
 
 //
@@ -30,10 +41,11 @@ app.get("/user/:user", async function (req, res) {
     res.json({
       sub: searchRes[0].user_id,
       picture: searchRes[0].pfp,
+      name: searchRes[0].first_name,
     });
   } catch {
     res.type("text");
-    res.status(500).send("Failed to obtain user data");
+    res.status(500).send("Failed to obtain user data.");
   }
 });
 
@@ -57,6 +69,7 @@ app.post("/verify", async function (req, res) {
     res.json({
       sub: payload.sub,
       picture: payload.picture,
+      name: payload.given_name,
     });
   } catch {
     res.type("text");
@@ -67,7 +80,7 @@ app.post("/verify", async function (req, res) {
 //test
 app.get("/test", async function (req, res) {
   try {
-    let music = await getSong("1");
+    let music = await getLibrary("106858174925066300006");
     console.log(music);
     res.send({
       test: "testing",
@@ -124,7 +137,7 @@ app.post("/detect", async function (req, res) {
       };
     }
 
-    let currDate = new Date().toISOString().split("T")[0];
+    let currDate = new Date();
     if (req.body.userId !== "") {
       console.log("linking music to user");
       await addLibrary(req.body.userId, songInfo.musicId, currDate);
@@ -256,11 +269,15 @@ async function addLibrary(userId, musicId, currDate) {
 
 // get user history
 async function getLibrary(userId) {
-  //   SELECT * FROM music
-  //    INNER JOIN (SELECT *
-  // 		            FROM detected
-  // 		            WHERE user_id = '106858174925066300006') AS linked
-  //    ON linked.music_id = music.music_id;
+  let query =
+    "SELECT * FROM music " +
+    "INNER JOIN (SELECT * " +
+    "FROM detected " +
+    "WHERE user_id = $1) AS linked " +
+    "ON linked.music_id = music.music_id " + 
+    "ORDER BY detected_date DESC";
+  let libraryRes = await pool.query(query, [userId]);
+  return libraryRes.rows;
 }
 
 const PORT = process.env.PORT || 5000;

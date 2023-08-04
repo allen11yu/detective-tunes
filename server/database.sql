@@ -26,7 +26,7 @@ CREATE TABLE music (
 CREATE TABLE detected (
     user_id VARCHAR(255) NOT NULL,
     music_id VARCHAR(255) NOT NULL,
-    detected_date DATE,
+    detected_date TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES dt_user(user_id),
     FOREIGN KEY (music_id) REFERENCES music(music_id)
 );

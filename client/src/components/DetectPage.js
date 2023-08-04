@@ -5,7 +5,7 @@ import { faMicrophone } from "@fortawesome/free-solid-svg-icons";
 import MusicCard from "./MusicCard";
 import MusicWave from "./MusicWave";
 
-function DetectPage({ user }) {
+function DetectPage({ user, detections, setDetectionsCallback }) {
   const [currStatus, setCurrStatus] = useState(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isDetected, setIsDetected] = useState(false);
@@ -24,13 +24,9 @@ function DetectPage({ user }) {
     })
       .then((res) => res.json())
       .then((data) => {
-        handleSuccessDetect(data);
+        setIsDetected(true);
+        setSongData(data);
       });
-  };
-
-  const handleSuccessDetect = (data) => {
-    setIsDetected(true);
-    setSongData(data);
   };
 
   useEffect(() => {
@@ -38,12 +34,16 @@ function DetectPage({ user }) {
       console.log("song data in useEffect");
       console.log(songData);
       console.log("adding to library");
-    }
+    };
 
     if (user && songData) {
       addToLibrary();
     }
-  }, [user]);
+
+    if (isDetected) {
+      setDetectionsCallback([songData, ...detections]);
+    }
+  }, [user, isDetected]);
 
   const handleRecord = () => {
     setCurrStatus("Listening...");
@@ -133,9 +133,11 @@ function DetectPage({ user }) {
     <div className="detect container">
       <h1>Song is detected!</h1>
       <MusicCard songData={songData} />
-      <p className="margin-top-sm">
-        Make sure to login to save your previous detections.
-      </p>
+      {!user && (
+        <p className="margin-top-sm">
+          Make sure to login to save your previous detections.
+        </p>
+      )}
     </div>
   );
 

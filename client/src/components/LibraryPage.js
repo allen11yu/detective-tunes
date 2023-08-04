@@ -1,18 +1,35 @@
 import React from "react";
 
-function LibraryPage({ user }) {
-  // fetch library
+function LibraryMusicCards({ detections }) {
+  console.log("detections");
+  console.log(detections);
+  return <div></div>;
+}
 
+function LibraryPage({ user, detections, setDetectionsCallback }) {
   const needLogin = (
     <div>
-      <p>Please log in to view your library.</p>
+      <h1 className="center">Here are your previous detections.</h1>
+      <p className="center margin-top-sm">
+        Please log in to view your library.
+      </p>
     </div>
   );
 
   return (
     <div className="library">
-      <h1 className="center">Library page!</h1>
-      {user ? <div>hello!</div> : needLogin}
+      {user ? (
+        <div>
+          <h1 className="center">
+            Hello {user.name}! Here are your previous detections.
+          </h1>
+          <div className="library-list">
+            <LibraryMusicCards detections={detections} />
+          </div>
+        </div>
+      ) : (
+        needLogin
+      )}
     </div>
   );
 }

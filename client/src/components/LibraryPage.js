@@ -1,12 +1,7 @@
 import React from "react";
+import LibraryMusicCard from "./LibraryMusicCard";
 
-function LibraryMusicCards({ detections }) {
-  console.log("detections");
-  console.log(detections);
-  return <div></div>;
-}
-
-function LibraryPage({ user, detections, setDetectionsCallback }) {
+function LibraryPage({ user, detections }) {
   const needLogin = (
     <div>
       <h1 className="center">Here are your previous detections.</h1>
@@ -16,6 +11,11 @@ function LibraryPage({ user, detections, setDetectionsCallback }) {
     </div>
   );
 
+  let musicCards = [];
+  musicCards = detections.map((music, index) => {
+    return <LibraryMusicCard songData={music} index={index} />;
+  });
+
   return (
     <div className="library">
       {user ? (
@@ -23,9 +23,7 @@ function LibraryPage({ user, detections, setDetectionsCallback }) {
           <h1 className="center">
             Hello {user.name}! Here are your previous detections.
           </h1>
-          <div className="library-list">
-            <LibraryMusicCards detections={detections} />
-          </div>
+          <div className="lib-music-card-container">{musicCards}</div>
         </div>
       ) : (
         needLogin

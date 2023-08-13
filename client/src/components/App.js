@@ -5,7 +5,6 @@ import NavBar from "./NavBar";
 import { useEffect, useState } from "react";
 
 function App() {
-  const [isLogin, setIsLogin] = useState(false);
   const [user, setUser] = useState(null);
   const [detections, setDetections] = useState([]);
 
@@ -36,10 +35,9 @@ function App() {
   return (
     <>
       <NavBar
-        isLogin={isLogin}
-        setIsLoginCallback={setIsLogin}
         user={user}
         setUserCallback={setUser}
+        setDetectionsCallback={setDetections}
       />
       <Routes>
         <Route
@@ -58,7 +56,6 @@ function App() {
             <LibraryPage
               user={user}
               detections={detections}
-              setDetectionsCallback={setDetections}
             />
           }
         />

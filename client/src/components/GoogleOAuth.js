@@ -1,7 +1,7 @@
 import React from "react";
 import { GoogleLogin } from "@react-oauth/google";
 
-function GoogleOAuth({ isLogin, setIsLoginCallback, user, setUserCallback }) {
+function GoogleOAuth({ user, setUserCallback, setDetectionsCallback }) {
   const fetchVerify = async (credential) => {
     await fetch("/verify", {
       method: "POST",
@@ -14,11 +14,19 @@ function GoogleOAuth({ isLogin, setIsLoginCallback, user, setUserCallback }) {
       .then((userData) => {
         setUserCallback(userData);
         localStorage.setItem("userid", userData.sub);
+        fetchLibrary(userData.sub);
+      });
+  };
+
+  const fetchLibrary = async (userId) => {
+    await fetch("/library/" + userId)
+      .then((res) => res.json())
+      .then((library) => {
+        setDetectionsCallback(library);
       });
   };
 
   const handleSuccessLogin = async (credentialResponse) => {
-    setIsLoginCallback(true);
     fetchVerify(credentialResponse.credential);
   };
 

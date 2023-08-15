@@ -2,11 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import GoogleOAuth from "./GoogleOAuth";
 
-function NavBar({
-  user,
-  setUserCallback,
-  setDetectionsCallback
-}) {
+function NavBar({ user, setUserCallback, detections, setDetectionsCallback }) {
   return (
     <nav>
       <ul>
@@ -23,6 +19,7 @@ function NavBar({
       </ul>
       <GoogleOAuth
         user={user}
+        detections={detections}
         setUserCallback={setUserCallback}
         setDetectionsCallback={setDetectionsCallback}
       />

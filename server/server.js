@@ -20,7 +20,7 @@ const pool = new Pool({
   database: process.env.DB_NAME,
 });
 
-app.get("/library/:user", async function(req, res) {
+app.get("/library/:user", async function (req, res) {
   try {
     let userId = req.params["user"];
     let libraryRes = await getLibrary(userId);
@@ -31,9 +31,20 @@ app.get("/library/:user", async function(req, res) {
   }
 });
 
-app.post("/add", async function (req, res) {});
+app.post("/add", async function (req, res) {
+  try {
+    let dbMusic = await getSong(req.body.musicId);
+    if (dbMusic.length === 0) {
+      await addSong(req.body.songData);
+    }
+    await addLibrary(req.body.userId, req.body.songData.musicId, new Date());
+    res.send("Successfully added detected songs to the user library");
+  } catch {
+    res.type("text");
+    res.status(500).send("Failed to add song to user library.");
+  }
+});
 
-//
 app.get("/user/:user", async function (req, res) {
   try {
     let userId = req.params["user"];
@@ -77,17 +88,6 @@ app.post("/verify", async function (req, res) {
   }
 });
 
-//test
-app.get("/test", async function (req, res) {
-  try {
-    let music = await getLibrary("106858174925066300006");
-    console.log(music);
-    res.send({
-      test: "testing",
-    });
-  } catch {}
-});
-
 // detect music endpoint
 app.post("/detect", async function (req, res) {
   const url = "https://shazam.p.rapidapi.com/songs/detect";
@@ -108,20 +108,11 @@ app.post("/detect", async function (req, res) {
 
     let songInfo = {};
     if (dbMusic.length === 0) {
-      console.log("music not exist yet");
       songInfo = await extractSongInfo(result);
       if (req.body.userId !== "") {
-        console.log(
-          "user is logged in, adding song to the database. UserID: " +
-            req.body.userId
-        );
         await addSong(songInfo);
-      } else {
-        // delete this else statement.
-        console.log("user is not logged in, not adding song to the database");
       }
     } else {
-      console.log("music exist in the database");
       songInfo = {
         musicId: dbMusic[0].music_id,
         title: dbMusic[0].title,
@@ -137,16 +128,13 @@ app.post("/detect", async function (req, res) {
       };
     }
 
-    let currDate = new Date();
     if (req.body.userId !== "") {
-      console.log("linking music to user");
-      await addLibrary(req.body.userId, songInfo.musicId, currDate);
+      await addLibrary(req.body.userId, songInfo.musicId, new Date());
     }
-
     res.send(songInfo);
   } catch (error) {
     res.type("text");
-    res.status(500).send("An error occurred on the server. Try again later.");
+    res.status(500).send("Failed to detect the song.");
   }
 });
 
@@ -274,7 +262,7 @@ async function getLibrary(userId) {
     "INNER JOIN (SELECT * " +
     "FROM detected " +
     "WHERE user_id = $1) AS linked " +
-    "ON linked.music_id = music.music_id " + 
+    "ON linked.music_id = music.music_id " +
     "ORDER BY detected_date DESC";
   let libraryRes = await pool.query(query, [userId]);
   return libraryRes.rows;

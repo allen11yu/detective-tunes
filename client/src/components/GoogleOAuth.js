@@ -1,7 +1,12 @@
 import React from "react";
 import { GoogleLogin } from "@react-oauth/google";
 
-function GoogleOAuth({ user, setUserCallback, setDetectionsCallback }) {
+function GoogleOAuth({
+  user,
+  setUserCallback,
+  detections,
+  setDetectionsCallback,
+}) {
   const fetchVerify = async (credential) => {
     await fetch("/verify", {
       method: "POST",
@@ -14,8 +19,24 @@ function GoogleOAuth({ user, setUserCallback, setDetectionsCallback }) {
       .then((userData) => {
         setUserCallback(userData);
         localStorage.setItem("userid", userData.sub);
+        addToLibrary(userData.sub);
         fetchLibrary(userData.sub);
       });
+  };
+
+  const addToLibrary = async (userId) => {
+    for (const songData of detections) {
+      console.log("detections before loggin");
+      console.log(songData);
+
+      await fetch("/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ songData, userId }),
+      });
+    }
   };
 
   const fetchLibrary = async (userId) => {

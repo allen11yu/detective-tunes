@@ -37,6 +37,7 @@ function App() {
       <NavBar
         user={user}
         setUserCallback={setUser}
+        detections={detections}
         setDetectionsCallback={setDetections}
       />
       <Routes>

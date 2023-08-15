@@ -13,7 +13,7 @@ function LibraryPage({ user, detections }) {
 
   let musicCards = [];
   musicCards = detections.map((music, index) => {
-    return <LibraryMusicCard songData={music} index={index} />;
+    return <LibraryMusicCard songData={music} key={index} />;
   });
 
   return (

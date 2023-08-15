@@ -9,8 +9,7 @@ import {
 import { faCirclePause, faCirclePlay } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 
-function LibraryMusicCard({ songData, index }) {
-  console.log(songData);
+function LibraryMusicCard({ songData }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [previewAudio] = useState(new Audio(songData.preview));
 
@@ -29,8 +28,8 @@ function LibraryMusicCard({ songData, index }) {
   };
 
   return (
-    <div className="lib-music-card" key={index}>
-      <div className="test">
+    <div className="lib-music-card">
+      <div className="lib-play-img">
         <div className="countdown">
           <FontAwesomeIcon
             icon={isPlaying ? faCirclePause : faCirclePlay}

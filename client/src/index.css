@@ -77,6 +77,7 @@ nav li {
   justify-content: center;
   align-items: center;
   margin: auto;
+  gap: 1em;
 }
 
 .record {
@@ -229,6 +230,18 @@ nav li {
   transition: all 0.2s ease-in-out;
 }
 
+.button {
+  background-color: #6F2DBD;
+  color: #b9faf8;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
 /* Library page */
 .lib-music-card-container {
   display: flex;
@@ -270,7 +283,7 @@ nav li {
   font-size: 1.5rem;
 }
 
-.test {
+.lib-play-img {
   display: flex;
   flex-direction: row;
   justify-content: center;

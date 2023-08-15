@@ -30,20 +30,10 @@ function DetectPage({ user, detections, setDetectionsCallback }) {
   };
 
   useEffect(() => {
-    const addToLibrary = () => {
-      console.log("song data in useEffect");
-      console.log(songData);
-      console.log("adding to library");
-    };
-
-    if (user && songData) {
-      addToLibrary();
-    }
-
     if (isDetected) {
       setDetectionsCallback([songData, ...detections]);
     }
-  }, [user, isDetected]);
+  }, [isDetected]);
 
   const handleRecord = () => {
     setCurrStatus("Listening...");
@@ -115,6 +105,13 @@ function DetectPage({ user, detections, setDetectionsCallback }) {
     return btoa(binaryString);
   };
 
+  const reset = () => {
+    setCurrStatus(null);
+    setIsAnalyzing(false);
+    setIsDetected(false);
+    setSongData(null);
+  }
+
   const recordButton = (
     <div className="record" onClick={handleRecord}>
       <FontAwesomeIcon icon={faMicrophone} size="2xl" />
@@ -125,7 +122,7 @@ function DetectPage({ user, detections, setDetectionsCallback }) {
     <div className="detect container">
       <h1>Click on the record button below to start detecting songs.</h1>
       {currStatus ? <MusicWave isAnalyzing={isAnalyzing} /> : recordButton}
-      <p className="margin-top-sm">{currStatus}</p>
+      <p>{currStatus}</p>
     </div>
   );
 
@@ -133,11 +130,8 @@ function DetectPage({ user, detections, setDetectionsCallback }) {
     <div className="detect container">
       <h1>Song is detected!</h1>
       <MusicCard songData={songData} />
-      {!user && (
-        <p className="margin-top-sm">
-          Make sure to login to save your previous detections.
-        </p>
-      )}
+      <button className="button" onClick={reset}>Detect Another</button>
+      {!user && <p>Make sure to login to save your previous detections.</p>}
     </div>
   );
 

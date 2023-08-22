@@ -1,17 +1,18 @@
+require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
+const fetch = require("node-fetch");
+const cors = require("cors");
+const { Pool } = require("pg");
+const { OAuth2Client } = require("google-auth-library");
 const app = express();
 app.use(bodyParser.json({ limit: "1mb" }));
-const cors = require("cors");
-require("dotenv").config();
-const { Pool } = require("pg");
-const fetch = require("node-fetch");
-const { OAuth2Client } = require("google-auth-library");
 
-// built-in middleware
+/** Middlewares */
 app.use(express.json());
 app.use(cors());
 
+/** Connection to the PostgreSQL relational database. */
 const pool = new Pool({
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
@@ -20,6 +21,7 @@ const pool = new Pool({
   database: process.env.DB_NAME,
 });
 
+/** Get user's library. */
 app.get("/library/:user", async function (req, res) {
   try {
     let userId = req.params["user"];
@@ -31,9 +33,10 @@ app.get("/library/:user", async function (req, res) {
   }
 });
 
+/** Add detected songs to the user library. */
 app.post("/add", async function (req, res) {
   try {
-    let dbMusic = await getSong(req.body.musicId);
+    let dbMusic = await getSong(req.body.songData.musicId);
     if (dbMusic.length === 0) {
       await addSong(req.body.songData);
     }
@@ -45,6 +48,7 @@ app.post("/add", async function (req, res) {
   }
 });
 
+/** Get user's profile information. */
 app.get("/user/:user", async function (req, res) {
   try {
     let userId = req.params["user"];
@@ -60,6 +64,7 @@ app.get("/user/:user", async function (req, res) {
   }
 });
 
+/** Verify the JWT token. */
 app.post("/verify", async function (req, res) {
   try {
     const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -71,10 +76,8 @@ app.post("/verify", async function (req, res) {
 
     let user = await getUser(payload.sub);
     if (user.length === 0) {
-      console.log("user " + payload.sub + " not found, creating a new entry.");
       await newUser(payload);
     } else {
-      console.log("updating user info");
       await updateUser(payload);
     }
     res.json({
@@ -88,7 +91,7 @@ app.post("/verify", async function (req, res) {
   }
 });
 
-// detect music endpoint
+/** Detect the song via the encoded base64 string. */
 app.post("/detect", async function (req, res) {
   const url = "https://shazam.p.rapidapi.com/songs/detect";
   const options = {
@@ -138,6 +141,11 @@ app.post("/detect", async function (req, res) {
   }
 });
 
+/**
+ * Extract the song information from the Shazam API response
+ * @param {json} detectRes - the response from the Shazam API.
+ * @returns {json} - extracted song information.
+ */
 async function extractSongInfo(detectRes) {
   let youtube = "";
   for (let i = 0; i < detectRes.track.sections.length; i++) {
@@ -149,7 +157,7 @@ async function extractSongInfo(detectRes) {
   let spotify = detectRes.track.hub.providers[0].actions[0].uri;
   spotify = "https://open.spotify.com/search/" + spotify.split(":").pop();
 
-  // take the first and last word of title and append to the full artist.\
+  // take the first and last word of title and append to the full artist.
   let artist = detectRes.track.subtitle;
   let title = detectRes.track.title;
   let titleArr = title.replace(/[\])}[{(]/g, "").split(" ");
@@ -185,6 +193,10 @@ async function extractSongInfo(detectRes) {
   };
 }
 
+/**
+ * Add new song to the music table.
+ * @param {json} songInfo - the extracted song information.
+ */
 async function addSong(songInfo) {
   let query =
     "INSERT INTO music (music_id, title, album, artist, cover, deezer, itunes, preview, shazam, spotify, youtube) " +
@@ -205,12 +217,22 @@ async function addSong(songInfo) {
   await pool.query(query, values);
 }
 
+/**
+ * Retrieve the song data that matches the inputted music id.
+ * @param {string} musicId - the music id.
+ * @returns {array} - list of songs with music id.
+ */
 async function getSong(musicId) {
   let query = "SELECT * FROM music WHERE music_id = $1";
   let musicRes = await pool.query(query, [musicId]);
   return musicRes.rows;
 }
 
+/**
+ * Retrieve the user data that matches the inputted user id.
+ * @param {string} userId - the user id.
+ * @returns {array} - list of users with user id.
+ */
 async function getUser(userId) {
   let query = "SELECT * FROM dt_user WHERE user_id = $1";
   console.log("getting the user from DB");
@@ -218,6 +240,10 @@ async function getUser(userId) {
   return searchRes.rows;
 }
 
+/**
+ * Add new user to the user table.
+ * @param {json} user - the user information.
+ */
 async function newUser(user) {
   let query =
     "INSERT INTO dt_user (user_id, email, pfp, first_name, last_name) " +
@@ -232,6 +258,10 @@ async function newUser(user) {
   await pool.query(query, values);
 }
 
+/**
+ * Update the existing user information.
+ * @param {json} user - the user information.
+ */
 async function updateUser(user) {
   let query =
     "UPDATE dt_user SET email = $2, pfp = $3, first_name = $4, last_name = $5 " +
@@ -246,7 +276,12 @@ async function updateUser(user) {
   await pool.query(query, values);
 }
 
-// Link user to music
+/**
+ * Add the newly detected music to the user's library.
+ * @param {string} userId - the user id.
+ * @param {string} musicId - the music id.
+ * @param {date} currDate - current timestamp.
+ */
 async function addLibrary(userId, musicId, currDate) {
   let query =
     "INSERT INTO detected (user_id, music_id, detected_date) " +
@@ -255,7 +290,11 @@ async function addLibrary(userId, musicId, currDate) {
   await pool.query(query, values);
 }
 
-// get user history
+/**
+ * Retrieve the user's library.
+ * @param {string} userId - the user id.
+ * @returns {array} - list of previously detected songs.
+ */
 async function getLibrary(userId) {
   let query =
     "SELECT * FROM music " +
@@ -271,4 +310,4 @@ async function getLibrary(userId) {
 const PORT = process.env.PORT || 5000;
 
 /** Listens on port 5000 for connection */
-app.listen(PORT, () => console.log("Server started on port 5000"));
+app.listen(PORT, () => console.log("Server started on port " + PORT));

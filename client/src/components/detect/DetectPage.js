@@ -110,7 +110,7 @@ function DetectPage({ user, detections, setDetectionsCallback }) {
     setIsAnalyzing(false);
     setIsDetected(false);
     setSongData(null);
-  }
+  };
 
   const recordButton = (
     <div className="record" onClick={handleRecord}>
@@ -130,7 +130,9 @@ function DetectPage({ user, detections, setDetectionsCallback }) {
     <div className="detect container">
       <h1>Song is detected!</h1>
       <MusicCard songData={songData} />
-      <button className="button" onClick={reset}>Detect Another</button>
+      <button className="button" onClick={reset}>
+        Detect Another
+      </button>
       {!user && <p>Make sure to login to save your previous detections.</p>}
     </div>
   );

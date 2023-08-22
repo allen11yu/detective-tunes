@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
-import DetectPage from "./DetectPage";
-import LibraryPage from "./LibraryPage";
-import NavBar from "./NavBar";
+import DetectPage from "./detect/DetectPage";
+import LibraryPage from "./library/LibraryPage";
+import NavBar from "./navbar/NavBar";
 import { useEffect, useState } from "react";
 
 function App() {
@@ -53,12 +53,7 @@ function App() {
         />
         <Route
           path="/library"
-          element={
-            <LibraryPage
-              user={user}
-              detections={detections}
-            />
-          }
+          element={<LibraryPage user={user} detections={detections} />}
         />
       </Routes>
     </>

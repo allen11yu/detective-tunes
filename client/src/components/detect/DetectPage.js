@@ -26,7 +26,13 @@ function DetectPage({ user, detections, setDetectionsCallback }) {
       .then((data) => {
         setIsDetected(true);
         setSongData(data);
-      });
+      })
+      .catch(handleFailedDetect);
+  };
+
+  const handleFailedDetect = () => {
+    reset();
+    setCurrStatus("Something went wrong. Please try again.");
   };
 
   useEffect(() => {
@@ -121,8 +127,8 @@ function DetectPage({ user, detections, setDetectionsCallback }) {
   const preDetect = (
     <div className="detect container">
       <h1>Click on the record button below to start detecting songs.</h1>
-      {currStatus ? <MusicWave isAnalyzing={isAnalyzing} /> : recordButton}
-      <p>{currStatus}</p>
+      {currStatus === "Analyzing the music..." || currStatus === "Listening..." ? <MusicWave isAnalyzing={isAnalyzing} /> : recordButton}
+      <p className="margin-top-sm">{currStatus}</p>
     </div>
   );
 

@@ -21,7 +21,8 @@ function GoogleOAuth({
         localStorage.setItem("userid", userData.sub);
         addToLibrary(userData.sub);
         fetchLibrary(userData.sub);
-      });
+      })
+      .catch(handleLogout);
   };
 
   const addToLibrary = async (userId) => {
@@ -51,11 +52,6 @@ function GoogleOAuth({
     fetchVerify(credentialResponse.credential);
   };
 
-  const handleFailedLogin = () => {
-    console.log("login failed");
-    setUserCallback(null);
-  };
-
   const handleLogout = () => {
     console.log("logging out");
     setUserCallback(null);
@@ -66,7 +62,7 @@ function GoogleOAuth({
     <GoogleLogin
       shape="circle"
       onSuccess={handleSuccessLogin}
-      onError={handleFailedLogin}
+      onError={handleLogout}
     />
   );
 

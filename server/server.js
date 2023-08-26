@@ -14,11 +14,15 @@ app.use(cors());
 
 /** Connection to the PostgreSQL relational database. */
 const pool = new Pool({
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  database: process.env.DB_NAME,
+  user: process.env.RDS_USERNAME,
+  password: process.env.RDS_PASSWORD,
+  host: process.env.RDS_HOSTNAME,
+  port: process.env.RDS_PORT,
+  database: process.env.RDS_DB_NAME,
+  ssl: {
+    require: true,
+    rejectUnauthorized: false,
+  },
 });
 
 /** Get user's library. */
@@ -235,7 +239,6 @@ async function getSong(musicId) {
  */
 async function getUser(userId) {
   let query = "SELECT * FROM dt_user WHERE user_id = $1";
-  console.log("getting the user from DB");
   let searchRes = await pool.query(query, [userId]);
   return searchRes.rows;
 }

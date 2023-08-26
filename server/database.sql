@@ -5,7 +5,7 @@ CREATE TABLE dt_user (
     pfp VARCHAR(255),
     first_name VARCHAR(255),
     last_name VARCHAR(255),
-    PRIMARY KEY (userid)
+    PRIMARY KEY (user_id)
 );
 
 CREATE TABLE music (

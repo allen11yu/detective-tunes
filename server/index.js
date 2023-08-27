@@ -1,5 +1,6 @@
 require("dotenv").config();
 const express = require("express");
+const serverless = require("serverless-http");
 const bodyParser = require("body-parser");
 const fetch = require("node-fetch");
 const cors = require("cors");
@@ -310,7 +311,9 @@ async function getLibrary(userId) {
   return libraryRes.rows;
 }
 
-const PORT = process.env.PORT || 5000;
+// const PORT = process.env.PORT || 5000;
 
 /** Listens on port 5000 for connection */
-app.listen(PORT, () => console.log("Server started on port " + PORT));
+// app.listen(PORT, () => console.log("Server started on port " + PORT));
+
+module.exports.handler = serverless(app);

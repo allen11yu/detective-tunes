@@ -1,7 +1,7 @@
 {
   "name": "detective-tunes",
   "version": "0.1.0",
-  "proxy": "http://localhost:5000",
+  "proxy": "https://9u2rs1dro0.execute-api.us-east-2.amazonaws.com/prod",
   "private": true,
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.4.0",

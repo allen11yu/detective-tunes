@@ -47,7 +47,7 @@ nav li {
 }
 
 .link {
-  color: c;
+  color: #6F2DBD;
   text-decoration: none;
   font-size: 1.5rem;
 }
@@ -68,6 +68,7 @@ nav li {
 
 .profile span {
   cursor: pointer;
+  color: #6F2DBD;
 }
 
 /* Detect Page */

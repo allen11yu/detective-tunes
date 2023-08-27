@@ -27,9 +27,6 @@ function GoogleOAuth({
 
   const addToLibrary = async (userId) => {
     for (const songData of detections) {
-      console.log("detections before loggin");
-      console.log(songData);
-
       await fetch("/add", {
         method: "POST",
         headers: {
@@ -53,8 +50,8 @@ function GoogleOAuth({
   };
 
   const handleLogout = () => {
-    console.log("logging out");
     setUserCallback(null);
+    setDetectionsCallback([]);
     localStorage.removeItem("userid");
   };
 

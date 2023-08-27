@@ -11,8 +11,6 @@ import { faCirclePause, faCirclePlay } from "@fortawesome/free-solid-svg-icons";
 function MusicCard({ songData }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [previewAudio] = useState(new Audio(songData.preview));
-  console.log("Here is the songData passed down!");
-  console.log(songData);
 
   const handlePlayMusic = () => {
     setIsPlaying(!isPlaying);

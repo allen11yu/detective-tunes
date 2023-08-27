@@ -14,7 +14,6 @@ function DetectPage({ user, detections, setDetectionsCallback }) {
   const fetchDetect = async (audioBase64) => {
     let userId = user ? user.sub : "";
 
-    console.log("User logged in? " + userId);
     await fetch("/detect", {
       method: "POST",
       headers: {
@@ -77,11 +76,7 @@ function DetectPage({ user, detections, setDetectionsCallback }) {
             let arrayBuffer = fileReader.result;
             audioContext.decodeAudioData(arrayBuffer, (buffer) => {
               let base64 = bufferToBase64(buffer);
-              console.log(base64);
               fetchDetect(base64);
-
-              //delete
-              //setIsDetected(true);
             });
           };
         });

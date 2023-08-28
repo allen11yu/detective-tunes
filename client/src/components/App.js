@@ -17,7 +17,7 @@ function App() {
   };
 
   const fetchLibrary = async (userId) => {
-    await fetch("/library/" + userId)
+    await fetch(process.env.REACT_APP_API_HOST + "/library/" + userId)
       .then((res) => res.json())
       .then((library) => {
         setDetections(library);

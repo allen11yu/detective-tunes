@@ -14,7 +14,7 @@ function DetectPage({ user, detections, setDetectionsCallback }) {
   const fetchDetect = async (audioBase64) => {
     let userId = user ? user.sub : "";
 
-    await fetch("/detect", {
+    await fetch(process.env.REACT_APP_API_HOST + "/detect", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

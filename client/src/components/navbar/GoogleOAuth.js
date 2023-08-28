@@ -8,7 +8,7 @@ function GoogleOAuth({
   setDetectionsCallback,
 }) {
   const fetchVerify = async (credential) => {
-    await fetch("/verify", {
+    await fetch(process.env.REACT_APP_API_HOST + "/verify", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -27,7 +27,7 @@ function GoogleOAuth({
 
   const addToLibrary = async (userId) => {
     for (const songData of detections) {
-      await fetch("/add", {
+      await fetch(process.env.REACT_APP_API_HOST + "/add", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -38,7 +38,7 @@ function GoogleOAuth({
   };
 
   const fetchLibrary = async (userId) => {
-    await fetch("/library/" + userId)
+    await fetch(process.env.REACT_APP_API_HOST + "/library/" + userId)
       .then((res) => res.json())
       .then((library) => {
         setDetectionsCallback(library);

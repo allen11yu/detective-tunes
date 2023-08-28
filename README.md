@@ -4,7 +4,7 @@ Detective Tunes is a full-stack web application that aims to improve the accessi
 This app enables its users to discover the music of their interest.
 
 ## Demo
-Check out this application.
+Check out this application: https://main.d3sxio79agh106.amplifyapp.com/
 
 Below is an example of detecting the song *Location* by *Khalid*.
 

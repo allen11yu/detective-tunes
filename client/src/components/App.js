@@ -9,7 +9,7 @@ function App() {
   const [detections, setDetections] = useState([]);
 
   const fetchUser = async (userId) => {
-    await fetch("/user/" + userId)
+    await fetch(process.env.REACT_APP_API_HOST + "/user/" + userId)
       .then((res) => res.json())
       .then((userData) => {
         setUser(userData);
